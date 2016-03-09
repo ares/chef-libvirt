@@ -6,11 +6,24 @@
   <forward mode="<%= @forward %>"/>
 <%end %>
 <% if @domain %>
-  <domain name="<%= @domain %>"/>
+  <domain name="<%= @domain %>" localOnly="yes" />
+  <dns>
+<% @dns_a_records.each do |name, ip| %>
+    <host ip='<%= ip -%>'>
+      <hostname><%= name -%></hostname>
+    </host>
+<% end %>
+  </dns>
 <%end %>
   <ip address="<%= @gateway %>" netmask="<%= @netmask %>">
+<% if @tftp %>
+    <tftp root='/var/lib/tftpboot'/>
+<% end %>
 <% if @dhcp %>
     <dhcp>
+<% if @tftp %>
+      <bootp file='pxelinux.0'/>
+<% end %>
       <range start="<%= @dhcp[:start] %>" end="<%= @dhcp[:end] %>" />
     </dhcp>
 <% end %>

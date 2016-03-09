@@ -7,10 +7,21 @@ case node[:platform]
     end
 
   when 'redhat', 'centos', 'fedora'
-    %w(qemu-kvm libvirt virt-manager bridge-utils libvirt-devel).each do |name|
+    %w(qemu-kvm libvirt virt-manager bridge-utils libvirt-devel libvirt-daemon-kvm libvirt-daemon-config-network).each do |name|
       package name do
         action :nothing
       end.run_action(:install)
+    end
+
+    service 'firewalld' do
+      action :nothing
+    end
+
+    # enable all incoming communication on virbr0 through firewalld but don't touch after modifications
+    template '/etc/firewalld/zones/trusted.xml' do
+      source 'firewalld_trusted.xml'
+      action :create_if_missing
+      notifies :reload, 'service[firewalld]', :immediately
     end
 end
   
