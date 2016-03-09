@@ -12,6 +12,8 @@ Usage
       bridge     'fakebr'
       forward    'nat'
       dhcp_range :start => '192.168.42.100', :end => '192.168.42.200'
+      tftp true
+      dns_a_records 'foreman.example.tst' => '192.168.122.1'
 
       action [:define, :create, :autostart]
     end
