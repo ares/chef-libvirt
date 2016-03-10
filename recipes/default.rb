@@ -7,7 +7,14 @@ case node[:platform]
     end
 
   when 'redhat', 'centos', 'fedora'
-    %w(qemu-kvm libvirt virt-manager bridge-utils libvirt-devel libvirt-daemon-kvm libvirt-daemon-config-network).each do |name|
+    packages = %w(qemu-kvm libvirt virt-manager bridge-utils libvirt-devel)
+
+    # centos and rhel 7+ provides following packages (works for fedora as well)
+    if node[:platform_version].split('.').first.to_i > 6
+      packages += %w(libvirt-daemon-kvm libvirt-daemon-config-network)
+    end
+
+    packages.each do |name|
       package name do
         action :nothing
       end.run_action(:install)
