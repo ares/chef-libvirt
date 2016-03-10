@@ -20,15 +20,18 @@ case node[:platform]
       end.run_action(:install)
     end
 
-    service 'firewalld' do
-      action :nothing
-    end
+    if node.platform?('rhel', 'centos', 'fedora') && node[:platform_version].to_i > 6
+      # firewall config is only supported on recent rpm based distros atm
+      service 'firewalld' do
+        action :nothing
+      end
 
-    # enable all incoming communication on virbr0 through firewalld but don't touch after modifications
-    template '/etc/firewalld/zones/trusted.xml' do
-      source 'firewalld_trusted.xml'
-      action :create_if_missing
-      notifies :reload, 'service[firewalld]', :immediately
+      # enable all incoming communication on virbr0 through firewalld but don't touch after modifications
+      template '/etc/firewalld/zones/trusted.xml' do
+        source 'firewalld_trusted.xml'
+        action :create_if_missing
+        notifies :reload, 'service[firewalld]', :immediately
+      end
     end
 end
   
