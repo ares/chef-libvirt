@@ -12,7 +12,7 @@ end
 action :define do
   # if there is already a network with the same name but different uuid than we stored last time
   if !@network.nil? && @uuid != @network.uuid
-    @network.undefine
+    @network.destroy
     @network = nil
   end
 
