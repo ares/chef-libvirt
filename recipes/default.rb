@@ -1,3 +1,5 @@
+include_recipe 'build-essential::default'
+
 case node[:platform]
   when 'debian', 'ubuntu'
     %w(libvirt-bin libvirt-dev).each do |name|
